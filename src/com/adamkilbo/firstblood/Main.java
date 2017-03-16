@@ -4,8 +4,9 @@ public class Main {
 
 	public static void main(String[] args) {
 		
+		callTests();
 		SQLTest();
-		
+		APITest();
 		APICalls api = new APICalls();
 		
 		
@@ -28,6 +29,11 @@ public class Main {
 			System.exit(0);
 		}
 
+	}
+	
+	public static void callTests(){
+		APITest();
+		SQLTest();
 	}
 	
 	public static void SQLTest() {

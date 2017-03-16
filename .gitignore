@@ -12,3 +12,5 @@
 hs_err_pid*
 
 bin/**/
+
+src/com/adamkilbo/firstblood/APIKey.txt
