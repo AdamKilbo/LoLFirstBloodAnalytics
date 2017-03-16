@@ -8,24 +8,17 @@ public class Tables {
 	
 	public Tables() {
 		
-		// create connection to tables
-		try {
-			Class.forName("org.sqlite.JDBC");
-			SQLConn = DriverManager.getConnection("jdbc:sqlite:test.db");
-		} catch (Exception e) {
-			System.out.println("Error connecting to database");
-			System.err.println(e.getClass().getName() + ": " + e.getMessage() );
-			System.exit(0);		
-		}
-		System.out.println("Opened database successfully");
-		
-		
+		connectToSQL();
 		
 		// delete tables, new data etc.
-		deleteTables();
+		// deleteTables();
 		
+		// create tables
+		//createTables();
 		
-		
+	}
+	
+	public void createTables(){
 		// check if the various sql tables exist. if not, create them.
 		DatabaseMetaData dbm = null;
 		ResultSet tables;
@@ -88,7 +81,19 @@ public class Tables {
 		}
 		
 		System.out.println("Verified/created SQL tables");
-		
+	}
+	
+	public void connectToSQL() {
+		// create connection to tables
+		try {
+			Class.forName("org.sqlite.JDBC");
+			SQLConn = DriverManager.getConnection("jdbc:sqlite:test.db");
+		} catch (Exception e) {
+			System.out.println("Error connecting to database");
+			System.err.println(e.getClass().getName() + ": " + e.getMessage() );
+			System.exit(0);		
+		}
+		System.out.println("Opened database successfully");
 	}
 	
 	//////////////////////

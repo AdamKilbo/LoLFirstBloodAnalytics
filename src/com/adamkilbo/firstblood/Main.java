@@ -4,13 +4,10 @@ public class Main {
 
 	public static void main(String[] args) {
 		
+		//Tables SQLTables = new Tables();
+		//APICalls api = new APICalls();
+		
 		callTests();
-		SQLTest();
-		APITest();
-		APICalls api = new APICalls();
-		
-		
-		
 		
 		while (true) {
 			// check if we have summoner IDs to grab matches from.
@@ -33,7 +30,14 @@ public class Main {
 	
 	public static void callTests(){
 		APITest();
-		SQLTest();
+		//SQLTest();
+	}
+	
+	public static void APITest() {
+		
+		APICalls api = new APICalls();
+		
+		api.match("2054994244");
 	}
 	
 	public static void SQLTest() {
