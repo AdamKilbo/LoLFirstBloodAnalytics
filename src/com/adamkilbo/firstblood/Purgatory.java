@@ -1,10 +1,10 @@
 package com.adamkilbo.firstblood;
 
-public class Purgatory {
+/*
+ * This file exists to hold code that isn't currently being used but may be used in the future. 
+ */
 
-	
-	
-}
+public class Purgatory {}
 
 /*			dbm = SQLConn.getMetaData();
 
@@ -13,6 +13,7 @@ if (tables.next()) {
 	;
 } else {
 	stmt = SQLConn.createStatement();
+	// on first iter only do following: matchID, killerRole, killerLane, killerChamp, FBTeamWin
       String sql = "CREATE TABLE FBStats "
                    + "(matchID INT NOT NULL, "
                    + " firstBloodTime INT NOT NULL, "

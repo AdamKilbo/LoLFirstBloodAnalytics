@@ -1,14 +1,17 @@
 package com.adamkilbo.firstblood;
 
-import org.json.simple.*;
 import java.net.*;
-
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+/*
+ * 
+ * This class makes calls to the riot games API and sends the response to the
+ * Parser.java class to be parsed and processed.
+ */
 public class APICalls {
 	static String apiKey = null;
 	
@@ -44,26 +47,30 @@ public class APICalls {
 		}
 		
 		if (apiKey == null) {
-			System.out.println("Uh Oh, APIKey is not set. Make a text file called APIKey.txt and insert your API key in the file");
+			System.out.println("Uh Oh, APIKey is not set. Make a text file called APIKey.txt and insert your API key in the file in the 'src/com/adamkilbo/firstblood/' directory");
 			System.exit(0);
 		} else {
 			System.out.println("apikey: " + apiKey);
 		}
 	}
 	
-	public String match(String matchID) {
+	public String parseMatch(String matchID) {
 		String request = "https://na.api.pvp.net/api/lol/na/v2.2/match/{matchId}?api_key={key}";
 		request = request.replace("{matchId}", matchID);
 		request = request.replace("{key}", apiKey);
 		
 		System.out.println("request: " + request);
 		
-		makeRequest(request);
+		String wut = makeRequest(request);
 		
-		return "hello";
+		Parser parser = new Parser();
+		
+		parser.parseMatch(wut);
+		
+		return wut;
 	}
 	
-	public void makeRequest(String request) {
+	public String makeRequest(String request) {
 		
 		try {
 			URL url = new URL(request);
@@ -85,15 +92,17 @@ public class APICalls {
 	            buffer.append(line);
 	        }
 	        
-	        line = buffer.toString();
-	        
-	        //JSONObject obj = new JSONObject(line);
-	        
 	        br.close();
+	        
+	        line = buffer.toString();
+	        return line;
 			
 		} catch (IOException e) {
 			e.printStackTrace();
+			System.exit(0);
 		}
+		
+		return "oops";
 		
 	}
 	

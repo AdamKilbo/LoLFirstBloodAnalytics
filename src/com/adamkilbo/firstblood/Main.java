@@ -37,7 +37,7 @@ public class Main {
 		
 		APICalls api = new APICalls();
 		
-		api.match("2054994244");
+		System.out.println(api.parseMatch("2054994244"));
 	}
 	
 	public static void SQLTest() {

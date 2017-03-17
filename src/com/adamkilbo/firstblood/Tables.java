@@ -2,6 +2,14 @@ package com.adamkilbo.firstblood;
 
 import java.sql.*;
 
+/*
+ * 
+ * This class interfaces with the SQL tables that exist. It can:
+ * 1) insert information into any of our various SQL tables
+ * 2) retrieve information from our SQL tables
+ * 3) Create and delete tables as needed when the program starts.
+ */
+
 public class Tables {
 	
 	Connection SQLConn = null;
@@ -128,50 +136,57 @@ public class Tables {
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	public void insertMatchIDQueue(int id) {
+		ResultSet rs = null;
+		ResultSet rs1 = null;
 		try {
-			
 			// Avoid duplicates
-			ResultSet rs = SQLConn.createStatement().executeQuery("select * from matchIDQueue where matchID = " + id + ";");
-			
+			rs = SQLConn.createStatement().executeQuery("select * from matchIDQueue where matchID = " + id + ";");
 		    if (!rs.next()) {
-		    	
 		    	// Ensure not in analyzed
-		    	ResultSet rs1 = SQLConn.createStatement().executeQuery("select * from matchIDAnalyzed where matchID = " + id + ";");
+		    	rs1 = SQLConn.createStatement().executeQuery("select * from matchIDAnalyzed where matchID = " + id + ";");
 				
 			    if (!rs1.next()) {
 			    	SQLConn.createStatement().executeUpdate("INSERT INTO matchIDQueue " + "VALUES ('" + id + "');");
-			    	rs1.close();
 			    }
-			    rs.close();
 		    }
-
 		} catch ( Exception e ) {
 		      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
 		      System.exit(0);
-		}
+		} finally {
+	    	try {
+				rs.close();
+				rs1.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+	    }
 	}
 	
 	public void insertSummonerIDQueue(int id) {
-		try {
+		ResultSet rs = null;
+		ResultSet rs1 = null;
 		
+		try {
 			// Avoid duplicates
-			ResultSet rs = SQLConn.createStatement().executeQuery("select * from summonerIDQueue where summonerID = '" + id + "';");
+			rs = SQLConn.createStatement().executeQuery("select * from summonerIDQueue where summonerID = '" + id + "';");
 		    if (!rs.next()) {	
-		    	
 		    	// Ensure not in analyzed
-		    	ResultSet rs1 = SQLConn.createStatement().executeQuery("select * from summonerIDAnalyzed where summonerID = '" + id + "';"); 
+		    	rs1 = SQLConn.createStatement().executeQuery("select * from summonerIDAnalyzed where summonerID = '" + id + "';"); 
 			    if (!rs1.next()) {
 			    	SQLConn.createStatement().executeUpdate("INSERT INTO summonerIDQueue " + "VALUES ('" + id + "');");
-			    	rs1.close();
 			    }
-			    rs.close();
-		    }
-		    
-		    
+		    }   
 		} catch ( Exception e ) {
 		      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
 		      System.exit(0);
-		}
+		} finally {
+	    	try {
+				rs.close();
+				rs1.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+	    }
 	}
 	
 	public void insertMatchIDAnalyzed(int id) {
@@ -205,18 +220,24 @@ public class Tables {
 	public int getSummonerIDQueue() {
 		
 		// get next summoner ID from queue
+		ResultSet rs = null;
 	    
 	    try {
-	      ResultSet rs = SQLConn.createStatement().executeQuery( "SELECT * FROM summonerIDQueue;" );
+	      rs = SQLConn.createStatement().executeQuery( "SELECT * FROM summonerIDQueue;" );
 	      int summonerID = rs.getInt("summonerID");
 	      SQLConn.createStatement().executeUpdate("DELETE FROM summonerIDQueue where summonerID = '" + summonerID + "';");
 	     
-	      rs.close();
 	      return summonerID;
 	      
 	    } catch ( Exception e ) {
 	      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
 	      System.exit(0);
+	    } finally {
+	    	try {
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 	    }
 	    
 	    System.out.println("oops, couldn't complete get 1");
@@ -227,19 +248,24 @@ public class Tables {
 	public int getMatchIDQueue() {
 		
 		// get next matchID from queue
+		ResultSet rs = null;
 	    
 	    try {
-	      ResultSet rs = SQLConn.createStatement().executeQuery("SELECT * FROM matchIDQueue;");  
+	      rs = SQLConn.createStatement().executeQuery("SELECT * FROM matchIDQueue;");  
 	      int matchID = rs.getInt("matchID");
-	      
 	      SQLConn.createStatement().executeUpdate("DELETE FROM matchIDQueue where matchID = '" + matchID + "';");
 	      
-	      rs.close();
 	      return matchID;
 	      
 	    } catch ( Exception e ) {
 	      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
 	      System.exit(0);
+	    } finally {
+	    	try {
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 	    }
 	    
 	    System.out.println("oops, couldn't complete get 2");
@@ -256,14 +282,16 @@ public class Tables {
 		
 		// returns true or false. 
 		//True = ID analyzed in past 3 days, ignore
+		ResultSet rs1 = null;
+		ResultSet rs2 = null;
 	    
 	    try {
-	    	ResultSet rs1 = SQLConn.createStatement().executeQuery("SELECT * FROM summonerIDAnalyzed WHERE summonerID = '" + ID + "';");
+	    	rs1 = SQLConn.createStatement().executeQuery("SELECT * FROM summonerIDAnalyzed WHERE summonerID = '" + ID + "';");
 	    	if (!rs1.next()) {
 	    		return false;
 	    	}
 	    	else{
-		    	ResultSet rs2 = SQLConn.createStatement().executeQuery( "SELECT * FROM summonerIDAnalyzed WHERE updateTime < (SELECT DATETIME('now', '-3 day')) AND summonerID = " + ID + ";" );
+		    	rs2 = SQLConn.createStatement().executeQuery( "SELECT * FROM summonerIDAnalyzed WHERE updateTime < (SELECT DATETIME('now', '-3 day')) AND summonerID = " + ID + ";" );
 			    if (!rs2.next()) {	
 			    	return true;
 			    } else {
@@ -274,6 +302,13 @@ public class Tables {
 	    	System.out.println("Error in getSummonerIDAnalyzed");
 	    	System.err.println( e.getClass().getName() + ": " + e.getMessage() );
 	    	System.exit(0);
+	    } finally {
+	    	try {
+				rs1.close();
+				rs2.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 	    }
 	    
 	    System.out.println("oops, couldn't complete get 3");
@@ -282,27 +317,29 @@ public class Tables {
 	}
 	
 	public boolean getMatchIDAnalyzed(int ID) {
-		
 		// see if match ID has been analyzed in past
 		// true = games has been analyzed in past, ignore
+		ResultSet rs = null;
 	    
 	    try {
-	    	
-	      ResultSet rs = SQLConn.createStatement().executeQuery( "SELECT * FROM matchIDAnalyzed WHERE matchID = " + ID + ";" );  
+	      rs = SQLConn.createStatement().executeQuery( "SELECT * FROM matchIDAnalyzed WHERE matchID = " + ID + ";" );  
 	      if (rs.getInt("matchID") == ID)
 	    	  return true;
 	      else
-	    	  return false;
-	      
-	        
+	    	  return false; 
 	    } catch ( Exception e ) {
 	      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
 	      System.exit(0);
+	    } finally {
+	    	try {
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 	    }
 	    
 	    System.out.println("oops, couldn't complete get 4");
 	    System.exit(0);
 		return false;
-		
 	}
 }
