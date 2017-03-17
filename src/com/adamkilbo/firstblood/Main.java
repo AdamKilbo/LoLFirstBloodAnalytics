@@ -15,7 +15,7 @@ public class Main {
 				// else continue
 			
 			// check if we have match IDs to grab data from.
-				// if zero, grab data match IDs from master/challenger players.
+				// if zero, grab data match IDs from our summoner ID queue.
 				// if > 0, take top match and analyze it for data and summoner IDs
 					// do analysis on data
 			
