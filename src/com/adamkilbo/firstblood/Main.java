@@ -38,6 +38,8 @@ public class Main {
 		APICalls api = new APICalls();
 		
 		System.out.println(api.parseMatch("2054994244"));
+		
+		System.out.println(api.getMatches("44989337"));
 	}
 	
 	public static void SQLTest() {
@@ -76,7 +78,8 @@ public class Main {
 
 
 // call for match history of summoner.Ranked solo/flex of season 7. Double check when I get chance. Currently this is bugged and doesn't return any games for 2017 season.
-// https://na.api.pvp.net/api/lol/na/v2.2/matchlist/by-summoner/{summonerId}?rankedQueues=RANKED_FLEX_SR,RANKED_SOLO_5x5&seasons=SEASON2017&api_key= (key)
+// https://na.api.pvp.net/api/lol/NA/v2.2/matchlist/by-summoner/{summonerId}?rankedQueues=TEAM_BUILDER_RANKED_SOLO&beginTime=1481108400000&api_key={key}
+// Epoch to use: 1481108400000 (start of season 2017)
 
 // call for detail on specific match:
 // https://na.api.pvp.net/api/lol/na/v2.2/match/{matchId}?api_key= (key)
