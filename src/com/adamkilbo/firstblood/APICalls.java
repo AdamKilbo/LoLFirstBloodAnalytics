@@ -12,6 +12,9 @@ import java.io.InputStreamReader;
  * This class makes calls to the riot games API and sends the response to the
  * Parser.java class to be parsed and processed.
  */
+
+// to do: be able to retreive size of SQL queue tables
+
 public class APICalls {
 	static String apiKey = null;
 	
@@ -54,20 +57,33 @@ public class APICalls {
 		}
 	}
 	
+	// get specific match information
 	public String parseMatch(String matchID) {
 		String request = "https://na.api.pvp.net/api/lol/na/v2.2/match/{matchId}?api_key={key}";
 		request = request.replace("{matchId}", matchID);
 		request = request.replace("{key}", apiKey);
-		
 		System.out.println("request: " + request);
 		
-		String wut = makeRequest(request);
+		String match = makeRequest(request);
 		
 		Parser parser = new Parser();
+		parser.parseMatch(match);
 		
-		parser.parseMatch(wut);
+		return match;
+	}
+	
+	// get a list of matches from summoner's match history
+	public String getMatches(String summonerId) {
+		String request = "https://na.api.pvp.net/api/lol/NA/v2.2/matchlist/by-summoner/{summonerId}?rankedQueues=TEAM_BUILDER_RANKED_SOLO&beginTime=1481108400000&api_key={key}";
+		request = request.replace("{key}", apiKey);
+		request = request.replace("{summonerId}", summonerId);
 		
-		return wut;
+		String matchList = makeRequest(request);
+		
+		Parser parser = new Parser();
+		parser.parseMatchList(matchList);
+				
+		return matchList;
 	}
 	
 	public String makeRequest(String request) {
