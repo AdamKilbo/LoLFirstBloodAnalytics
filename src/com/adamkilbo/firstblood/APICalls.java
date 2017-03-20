@@ -89,6 +89,14 @@ public class APICalls {
 	public String makeRequest(String request) {
 		
 		try {
+			try {
+				Thread.sleep(1500);
+			} catch (InterruptedException e) {
+				System.out.println("waiting failed");
+				e.printStackTrace();
+				System.exit(1);
+			}
+			
 			URL url = new URL(request);
 			
 			HttpURLConnection urlc = (HttpURLConnection) url.openConnection();

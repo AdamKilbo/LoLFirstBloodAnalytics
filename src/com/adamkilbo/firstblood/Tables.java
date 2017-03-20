@@ -22,7 +22,7 @@ public class Tables {
 		// deleteTables();
 		
 		// create tables
-		//createTables();
+		createTables();
 		
 	}
 	
@@ -84,6 +84,22 @@ public class Tables {
 			}
 			tables.close();
 			
+			// check if table FBStatistics exists
+			tables = dbm.getTables(null, null, "FBStatistics", null);
+			if (tables.next()) {
+				System.out.println("table FBStatistics already exists");
+			} else {
+				
+			    String sql = "CREATE TABLE FBStatistics "
+			                   + "(matchID INT NOT NULL,"
+			                   + "killerRole TEXT NOT NULL,"
+			                   + "killerLane TEXT NOT NULL,"
+			                   + "killerChamp INT NOT NULL,"
+			                   + "killerTeamWin BOOLEAN NOT NULL)"; 
+			    SQLConn.createStatement().executeUpdate(sql);
+			}
+			tables.close();
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -135,19 +151,23 @@ public class Tables {
 	// setters
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	public void insertMatchIDQueue(int id) {
+	public void insertMatchIDQueue(long matchId) {
 		ResultSet rs = null;
 		ResultSet rs1 = null;
 		try {
 			// Avoid duplicates
-			rs = SQLConn.createStatement().executeQuery("select * from matchIDQueue where matchID = " + id + ";");
+			rs = SQLConn.createStatement().executeQuery("select * from matchIDQueue where matchID = " + matchId + ";");
 		    if (!rs.next()) {
 		    	// Ensure not in analyzed
-		    	rs1 = SQLConn.createStatement().executeQuery("select * from matchIDAnalyzed where matchID = " + id + ";");
+		    	rs1 = SQLConn.createStatement().executeQuery("select * from matchIDAnalyzed where matchID = " + matchId + ";");
 				
 			    if (!rs1.next()) {
-			    	SQLConn.createStatement().executeUpdate("INSERT INTO matchIDQueue " + "VALUES ('" + id + "');");
+			    	SQLConn.createStatement().executeUpdate("INSERT INTO matchIDQueue " + "VALUES ('" + matchId + "');");
+			    } else {
+			    	System.out.println("MatchId already analyzed: " + matchId);
 			    }
+		    } else {
+		    	System.out.println("MatchId already in queue: " + matchId);
 		    }
 		} catch ( Exception e ) {
 		      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
@@ -155,34 +175,42 @@ public class Tables {
 		} finally {
 	    	try {
 				rs.close();
-				rs1.close();
+				if (rs1 != null) {
+					rs1.close();
+				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 	    }
 	}
 	
-	public void insertSummonerIDQueue(int id) {
+	public void insertSummonerIDQueue(long summonerId) {
 		ResultSet rs = null;
 		ResultSet rs1 = null;
 		
 		try {
 			// Avoid duplicates
-			rs = SQLConn.createStatement().executeQuery("select * from summonerIDQueue where summonerID = '" + id + "';");
+			rs = SQLConn.createStatement().executeQuery("select * from summonerIDQueue where summonerID = '" + summonerId + "';");
 		    if (!rs.next()) {	
 		    	// Ensure not in analyzed
-		    	rs1 = SQLConn.createStatement().executeQuery("select * from summonerIDAnalyzed where summonerID = '" + id + "';"); 
+		    	rs1 = SQLConn.createStatement().executeQuery("select * from summonerIDAnalyzed where summonerID = '" + summonerId + "';"); 
 			    if (!rs1.next()) {
-			    	SQLConn.createStatement().executeUpdate("INSERT INTO summonerIDQueue " + "VALUES ('" + id + "');");
+			    	SQLConn.createStatement().executeUpdate("INSERT INTO summonerIDQueue ('" + summonerId + "');");
+			    } else {
+			    	System.out.println("SummonerID already analyzed: " + summonerId);
 			    }
-		    }   
+		    } else {
+		    	System.out.println("SummonerID already in queue: " + summonerId);
+		    }
 		} catch ( Exception e ) {
 		      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
 		      System.exit(0);
 		} finally {
 	    	try {
 				rs.close();
-				rs1.close();
+				if (rs1 != null) {
+					rs1.close();
+				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -206,6 +234,28 @@ public class Tables {
 			SQLConn.createStatement().executeUpdate("INSERT INTO summonerIDAnalyzed (summonerID) " + "VALUES ('" + id + "');");
 		} catch ( Exception e ) {
 			
+		      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+		      System.exit(0);
+		}
+	}
+	
+	public void insertMatchStatistics(long matchId, String role, String lane, long champId, boolean teamWin) { // match role lane champ win
+		
+		try {
+			SQLConn.createStatement().executeUpdate("INSERT INTO FBStatistics ("
+                            + "matchID, "
+                            + "killerRole, "
+                            + "killerLane, "
+                            + "killerChamp, "
+                            + "killerTeamWin) "
+                            + "values ('"
+                         	+ matchId + "', '"
+                         	+ role + "', '"
+                         	+ lane + "', '"
+                         	+ champId + "', '"
+                         	+ teamWin + "');"
+					);
+		} catch ( Exception e ) {
 		      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
 		      System.exit(0);
 		}

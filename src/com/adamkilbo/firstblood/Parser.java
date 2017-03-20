@@ -21,6 +21,8 @@ public class Parser {
 	public Parser() {}
 	
 	void parseMatch(String match) {
+		Tables SQLTables = new Tables();
+		
 		JSONParser parser = new JSONParser();
 		JSONObject json = null;
 		try {
@@ -58,15 +60,31 @@ public class Parser {
 					//System.out.println("First Blood!\n.\n.\n.\n.");
 					// insert stats into table
 					// this order:
-					// championId, win/loss, role, lane, season highest
+					// championId, win/loss, role, lane, season highest 
+					
+					SQLTables.insertMatchStatistics(matchId, role, lane, championId, winner);
 				} 
+			}
+			
+			// matches -> participantIdentities. get IDs and insert into summonerIdQueue
+			JSONArray participantIdentities = (JSONArray) json.get("participantIdentities");
+			Iterator<?> j = participantIdentities.iterator();
+			
+			while (j.hasNext()) {
+				JSONObject participantIdentity = (JSONObject) j.next();
+				JSONObject player = (JSONObject) participantIdentity.get("player");
+				long summonerId = (long) player.get("summonerId");
+				System.out.println("SummonerId: " + summonerId);
 				
-				// matches -> participantIdentities. get IDs and insert into summonerIdQueue
+				SQLTables.insertSummonerIDQueue(summonerId);
 			}
 		}
 	}
 	
+	// sends match list into matchIDQueue
 	public void parseMatchList(String matchList) {
+		Tables SQLTables = new Tables();
+		
 		JSONParser parser = new JSONParser();
 		JSONObject json = null;
 		try {
@@ -81,8 +99,10 @@ public class Parser {
 		while (i.hasNext()) {
 			JSONObject match = (JSONObject) i.next();
 			long matchId = (long) match.get("matchId");
+			System.out.println("matchId: " + matchId);
 			
 			// insert matchID into matchIdQueue
+			SQLTables.insertMatchIDQueue(matchId);
 		}
 		
 	}
