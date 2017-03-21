@@ -36,10 +36,20 @@ public class Main {
 	public static void APITest() {
 		
 		APICalls api = new APICalls();
+		Tables SQLTables = new Tables();
 		
-		System.out.println(api.parseMatch("2054994244"));
+		api.getMasterChallengerPlayers();
 		
-		System.out.println(api.getMatches("44989337"));
+		//System.out.println(SQLTables.getSummonerIDQueueSize()); // working
+		//System.out.println(SQLTables.getMatchIDQueueSize()); // working
+		
+		//System.out.println(SQLTables.getSummonerIDQueue()); // working
+		
+		//System.out.println(api.parseMatch("2054994244")); // working
+		
+		//System.out.println(api.getMatches("44989337")); // working
+		
+		
 	}
 	
 	public static void SQLTest() {

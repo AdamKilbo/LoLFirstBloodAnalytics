@@ -63,6 +63,7 @@ public class Parser {
 					// championId, win/loss, role, lane, season highest 
 					
 					SQLTables.insertMatchStatistics(matchId, role, lane, championId, winner);
+					SQLTables.insertMatchIDAnalyzed(matchId);
 				} 
 			}
 			
@@ -77,6 +78,7 @@ public class Parser {
 				System.out.println("SummonerId: " + summonerId);
 				
 				SQLTables.insertSummonerIDQueue(summonerId);
+				SQLTables.insertSummonerIDAnalyzed(summonerId);
 			}
 		}
 	}
@@ -105,6 +107,30 @@ public class Parser {
 			SQLTables.insertMatchIDQueue(matchId);
 		}
 		
+	}
+
+	public void parseMasterChallengerPlayers(String masterChallengerPlayers) {
+		Tables SQLTables = new Tables();
+		
+		JSONParser parser = new JSONParser();
+		JSONObject json = null;
+		try {
+			json = (JSONObject) parser.parse(masterChallengerPlayers);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		// parse for summoner IDs
+		JSONArray players = (JSONArray) json.get("entries");
+		Iterator<?> i = players.iterator();
+		
+		while (i.hasNext()) {
+			JSONObject player = (JSONObject) i.next();
+			String summonerId = (String) player.get("playerOrTeamId");
+			System.out.println("challenger/masterID: " + summonerId);
+			
+			SQLTables.insertSummonerIDQueue(summonerId);
+		}
 	}
 
 }

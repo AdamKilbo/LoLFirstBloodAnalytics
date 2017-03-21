@@ -184,7 +184,7 @@ public class Tables {
 	    }
 	}
 	
-	public void insertSummonerIDQueue(long summonerId) {
+	public void insertSummonerIDQueue(String summonerId) {
 		ResultSet rs = null;
 		ResultSet rs1 = null;
 		
@@ -195,7 +195,7 @@ public class Tables {
 		    	// Ensure not in analyzed
 		    	rs1 = SQLConn.createStatement().executeQuery("select * from summonerIDAnalyzed where summonerID = '" + summonerId + "';"); 
 			    if (!rs1.next()) {
-			    	SQLConn.createStatement().executeUpdate("INSERT INTO summonerIDQueue ('" + summonerId + "');");
+			    	SQLConn.createStatement().executeUpdate("INSERT INTO summonerIDQueue (summonerId) values ('" + summonerId + "');");
 			    } else {
 			    	System.out.println("SummonerID already analyzed: " + summonerId);
 			    }
@@ -217,10 +217,43 @@ public class Tables {
 	    }
 	}
 	
-	public void insertMatchIDAnalyzed(int id) {
+	public void insertSummonerIDQueue(long summonerId) {
+		ResultSet rs = null;
+		ResultSet rs1 = null;
+		
+		try {
+			// Avoid duplicates
+			rs = SQLConn.createStatement().executeQuery("select * from summonerIDQueue where summonerID = '" + summonerId + "';");
+		    if (!rs.next()) {	
+		    	// Ensure not in analyzed
+		    	rs1 = SQLConn.createStatement().executeQuery("select * from summonerIDAnalyzed where summonerID = '" + summonerId + "';"); 
+			    if (!rs1.next()) {
+			    	SQLConn.createStatement().executeUpdate("INSERT INTO summonerIDQueue (summonerId) values ('" + summonerId + "');");
+			    } else {
+			    	System.out.println("SummonerID already analyzed: " + summonerId);
+			    }
+		    } else {
+		    	System.out.println("SummonerID already in queue: " + summonerId);
+		    }
+		} catch ( Exception e ) {
+		      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+		      System.exit(0);
+		} finally {
+	    	try {
+				rs.close();
+				if (rs1 != null) {
+					rs1.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+	    }
+	}
+	
+	public void insertMatchIDAnalyzed(long matchId) {
 		try {
 			
-			SQLConn.createStatement().executeUpdate("INSERT INTO matchIDAnalyzed (matchID) " + "VALUES ('" + id + "');");
+			SQLConn.createStatement().executeUpdate("INSERT INTO matchIDAnalyzed (matchID) " + "VALUES ('" + matchId + "');");
 		
 		} catch ( Exception e ) {
 		      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
@@ -228,10 +261,10 @@ public class Tables {
 		}
 	}
 	
-	public void insertSummonerIDAnalyzed(int id) {
+	public void insertSummonerIDAnalyzed(long summonerId) {
 		
 		try {
-			SQLConn.createStatement().executeUpdate("INSERT INTO summonerIDAnalyzed (summonerID) " + "VALUES ('" + id + "');");
+			SQLConn.createStatement().executeUpdate("INSERT INTO summonerIDAnalyzed (summonerID) " + "VALUES ('" + summonerId + "');");
 		} catch ( Exception e ) {
 			
 		      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
@@ -392,4 +425,54 @@ public class Tables {
 	    System.exit(0);
 		return false;
 	}
+	
+	public int getMatchIDQueueSize() {
+		ResultSet rs = null;
+		
+		int size = 0;
+		
+		try {
+			rs = SQLConn.createStatement().executeQuery( "SELECT count(*) FROM matchIDQueue" );
+			size = rs.getInt(1);
+			
+		} catch ( Exception e ) {
+		      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+		      System.exit(0);
+		} finally {
+	    	try {
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+	    }
+		
+		System.out.println("matchIDQueue size: " + size);
+		return size;
+	}
+	
+	public int getSummonerIDQueueSize() {
+		ResultSet rs = null;
+		
+		int size = 0;
+		
+		try {
+			rs = SQLConn.createStatement().executeQuery( "SELECT count(*) FROM summonerIDQueue" );
+			size = rs.getInt(1);
+			
+		} catch ( Exception e ) {
+		      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+		      System.exit(0);
+		} finally {
+	    	try {
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+	    }
+		
+		System.out.println("summonerIDQueue size: " + size);
+		return size;
+	}
+	
+	
 }

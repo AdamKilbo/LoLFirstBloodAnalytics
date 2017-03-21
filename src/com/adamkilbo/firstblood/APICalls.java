@@ -86,6 +86,20 @@ public class APICalls {
 		return matchList;
 	}
 	
+	public void getMasterChallengerPlayers() {
+		String request1 = "https://na.api.riotgames.com/api/lol/NA/v2.5/league/master?type=RANKED_SOLO_5x5&api_key={key}";
+		String request2 = "https://na.api.riotgames.com/api/lol/NA/v2.5/league/challenger?type=RANKED_SOLO_5x5&api_key={key}";
+		request1 = request1.replace("{key}", apiKey);
+		request2 = request2.replace("{key}", apiKey);
+		
+		String masterPlayers = makeRequest(request1);
+		String challengerPlayers = makeRequest(request2);
+		
+		Parser parser = new Parser();
+		parser.parseMasterChallengerPlayers(masterPlayers);
+		parser.parseMasterChallengerPlayers(challengerPlayers);
+	}
+	
 	public String makeRequest(String request) {
 		
 		try {
