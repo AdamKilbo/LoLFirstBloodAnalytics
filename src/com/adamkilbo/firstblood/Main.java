@@ -11,12 +11,12 @@ public class Main {
 		
 		while (true) {
 			// check if we have summoner IDs to grab matches from.
-				// if zero, seed w/ challenger/master players
+				// if low (~20), seed w/ challenger/master players
 				// else continue
 			
 			// check if we have match IDs to grab data from.
-				// if zero, grab data match IDs from our summoner ID queue.
-				// if > 0, take top match and analyze it for data and summoner IDs
+				// if low (~20), grab data match IDs from our summoner ID queue.
+				// if > 20, take top match and analyze it for data and summoner IDs
 					// do analysis on data
 			
 			
@@ -38,7 +38,7 @@ public class Main {
 		APICalls api = new APICalls();
 		Tables SQLTables = new Tables();
 		
-		api.getMasterChallengerPlayers();
+		//api.getMasterChallengerPlayers();
 		
 		//System.out.println(SQLTables.getSummonerIDQueueSize()); // working
 		//System.out.println(SQLTables.getMatchIDQueueSize()); // working

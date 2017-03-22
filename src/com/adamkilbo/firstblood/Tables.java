@@ -452,7 +452,6 @@ public class Tables {
 	
 	public int getSummonerIDQueueSize() {
 		ResultSet rs = null;
-		
 		int size = 0;
 		
 		try {
@@ -474,5 +473,81 @@ public class Tables {
 		return size;
 	}
 	
+	// returns most frequent champ
+	public int getMostFrequentChamp() {
+		ResultSet rs = null;
+		int champId = 0;
+		
+		try {
+			rs = SQLConn.createStatement().executeQuery("Select killerChamp, "
+					+ "count('killerchamp') as occurrence "
+					+ "FROM FBStatistics "
+					+ "group by killerchamp "
+					+ "order by occurrence desc "
+					+ "limit 1");
+			
+			champId = rs.getInt(1);
+			
+		} catch ( Exception e ) {
+		      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+		      System.exit(0);
+		}
+		finally {
+	    	try {
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+	    }
+		return champId;
+	}
+	
+	// returns number of times most frequent champ appeared
+	public int getMostFreqentChampNumber() {
+		ResultSet rs = null;
+		int champNumber = 0;
+		
+		try {
+			rs = SQLConn.createStatement().executeQuery("Select killerChamp, "
+					+ "count('killerchamp') as occurrence "
+					+ "FROM FBStatistics "
+					+ "group by killerchamp "
+					+ "order by occurrence desc "
+					+ "limit 1");
+			
+			champNumber = rs.getInt(2);
+			
+		} catch ( Exception e ) {
+		      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+		      System.exit(0);
+		}
+		finally {
+	    	try {
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+	    }
+		return champNumber;
+	}
+	
+	// role
+	public String getMostFrequentRole() {
+		return null;
+	}
+	
+	// lane
+	public String getMostFrequentLane() {
+		return null;
+	}
+	
+	// win
+	public int getNumberWins() {
+		return 0;
+	}
+	
+	public int getNumberLosses() {
+		return 0;
+	}
 	
 }

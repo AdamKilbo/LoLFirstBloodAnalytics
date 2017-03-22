@@ -100,6 +100,15 @@ public class APICalls {
 		parser.parseMasterChallengerPlayers(challengerPlayers);
 	}
 	
+	public String getChampName(int id) {  //wip
+		String champName = null;
+		//String request = "https://na.api.riotgames.com/api/lol/NA/v1.2/champion/{id}";
+		//request = request.replace("{key}", apiKey);
+		//request = request.replace("{id}", id);
+		
+		return "galio";
+	}
+	
 	public String makeRequest(String request) {
 		
 		try {
