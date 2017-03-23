@@ -57,10 +57,10 @@ public class Parser {
 				//System.out.println("firstBloodKill: " + firstBloodKill);
 				
 				if (firstBloodKill == true) {
-					//System.out.println("First Blood!\n.\n.\n.\n.");
 					// insert stats into table
 					// this order:
 					// championId, win/loss, role, lane, season highest 
+					System.out.println("this is what we got: " + matchId + role + lane + championId + winner);
 					
 					SQLTables.insertMatchStatistics(matchId, role, lane, championId, winner);
 					SQLTables.insertMatchIDAnalyzed(matchId);
@@ -98,6 +98,8 @@ public class Parser {
 		JSONArray matches = (JSONArray) json.get("matches");
 		Iterator<?> i = matches.iterator();
 		
+		System.out.println("Printing this summoner's matches: ");
+		
 		while (i.hasNext()) {
 			JSONObject match = (JSONObject) i.next();
 			long matchId = (long) match.get("matchId");
@@ -127,10 +129,26 @@ public class Parser {
 		while (i.hasNext()) {
 			JSONObject player = (JSONObject) i.next();
 			String summonerId = (String) player.get("playerOrTeamId");
-			System.out.println("challenger/masterID: " + summonerId);
+			//System.out.println("challenger/masterID: " + summonerId);
 			
 			SQLTables.insertSummonerIDQueue(summonerId);
 		}
+	}
+
+	public String parseName(String champObject) {
+		String champName = null;
+		
+		JSONParser parser = new JSONParser();
+		JSONObject json = null;
+		try {
+			json = (JSONObject) parser.parse(champObject);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		champName = (String) json.get("name");
+		
+		return champName;
 	}
 
 }

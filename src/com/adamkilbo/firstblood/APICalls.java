@@ -102,11 +102,17 @@ public class APICalls {
 	
 	public String getChampName(int id) {  //wip
 		String champName = null;
-		//String request = "https://na.api.riotgames.com/api/lol/NA/v1.2/champion/{id}";
-		//request = request.replace("{key}", apiKey);
-		//request = request.replace("{id}", id);
+		String request = "https://global.api.riotgames.com/api/lol/static-data/NA/v1.2/champion/{champId}?api_key={key}";
+		request = request.replace("{key}", apiKey);
+		String champId = Integer.toString(id);
+		request = request.replace("{champId}", champId);
 		
-		return "galio";
+		champName = makeRequest(request);
+		
+		Parser parser = new Parser();
+		champName = parser.parseName(champName);
+		
+		return champName;
 	}
 	
 	public String makeRequest(String request) {

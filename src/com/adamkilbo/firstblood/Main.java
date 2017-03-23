@@ -4,26 +4,39 @@ public class Main {
 
 	public static void main(String[] args) {
 		
-		//Tables SQLTables = new Tables();
-		//APICalls api = new APICalls();
+		Tables SQLTables = new Tables();
+		SQLTables.deleteTables();
+		SQLTables.createTables();
+		APICalls api = new APICalls();
+		FirstBloodAnalysis analysis = new FirstBloodAnalysis();
 		
-		callTests();
-		
+		//callTests();
+		boolean skipAnalysis = true;
 		while (true) {
-			// check if we have summoner IDs to grab matches from.
-				// if low (~20), seed w/ challenger/master players
+			// check if we have summoner IDs to grab matches from, or matches in our queue.
+				// if low (~5), seed w/ challenger/master players
 				// else continue
+			if (SQLTables.getSummonerIDQueueSize() < 5) {
+				System.out.println("seeding with master/challenger players");
+				api.getMasterChallengerPlayers();
+			} 
+			if (SQLTables.getMatchIDQueueSize() < 5) {
+				System.out.println("Getting matches from a player");
+				String summonerID = Integer.toString(SQLTables.getSummonerIDQueue());
+				System.out.println("printing summonerID: " + summonerID);
+				api.getMatches(summonerID);
+			}
+			System.out.println(SQLTables.getMatchIDQueueSize());
+			System.out.println("getting data from a match");
+			String matchID = Long.toString(SQLTables.getMatchIDQueue());
+			System.out.println("printing matchID: " + matchID);
+			api.parseMatch(matchID);
 			
-			// check if we have match IDs to grab data from.
-				// if low (~20), grab data match IDs from our summoner ID queue.
-				// if > 20, take top match and analyze it for data and summoner IDs
-					// do analysis on data
-			
-			
-			
-			
-			System.out.println("while loop");
-			System.exit(0);
+			if (skipAnalysis == false) {
+				analysis.doAnalysis();
+			} else {
+				skipAnalysis = false;
+			}
 		}
 
 	}
@@ -38,12 +51,13 @@ public class Main {
 		APICalls api = new APICalls();
 		Tables SQLTables = new Tables();
 		
-		//api.getMasterChallengerPlayers();
+		//FirstBloodAnalysis asdf = new FirstBloodAnalysis();
 		
-		//System.out.println(SQLTables.getSummonerIDQueueSize()); // working
-		//System.out.println(SQLTables.getMatchIDQueueSize()); // working
+		//asdf.doAnalysis();
 		
-		//System.out.println(SQLTables.getSummonerIDQueue()); // working
+		//System.out.println(api.getChampName(85)); // working
+		
+		//api.getMasterChallengerPlayers(); // working
 		
 		//System.out.println(api.parseMatch("2054994244")); // working
 		
@@ -54,6 +68,23 @@ public class Main {
 	
 	public static void SQLTest() {
 		//Tables SQLTables = new Tables();
+		
+		//System.out.println(SQLTables.getSummonerIDQueueSize()); // working
+		//System.out.println(SQLTables.getMatchIDQueueSize()); // working
+		
+		//System.out.println(SQLTables.getSummonerIDQueue()); // working
+		
+//		System.out.println(SQLTables.getMostFrequentLane());
+//		System.out.println(SQLTables.getMostFrequentLaneNumber());
+//		
+//		System.out.println(SQLTables.getMostFrequentRole());
+//		System.out.println(SQLTables.getMostFrequentRoleNumber());
+//		
+//		System.out.println(api.getChampName(SQLTables.getMostFrequentChamp()));
+//		System.out.println(SQLTables.getMostFrequentChampNumber());
+//		
+//		System.out.println(SQLTables.getNumberWins());
+//		System.out.println(SQLTables.getNumberLosses());
 		
 		/*SQLTables.insertMatchIDQueue(6);
 		int game = SQLTables.getMatchIDQueue();

@@ -18,13 +18,9 @@ public class Tables {
 		
 		connectToSQL();
 		
-		// delete tables, new data etc.
-		// deleteTables();
-		
-		// create tables
-		createTables();
-		
 	}
+	
+	
 	
 	public void createTables(){
 		// check if the various sql tables exist. if not, create them.
@@ -140,7 +136,10 @@ public class Tables {
 			dropTables = "DROP TABLE summonerIDAnalyzed;";
 			SQLConn.createStatement().executeUpdate(dropTables);
 			
-			System.out.println("table dropped");
+			dropTables = "DROP TABLE FBStatistics;";
+			SQLConn.createStatement().executeUpdate(dropTables);
+			
+			System.out.println("tables dropped");
 		} catch (SQLException e1) {
 			
 			e1.printStackTrace();
@@ -167,7 +166,7 @@ public class Tables {
 			    	System.out.println("MatchId already analyzed: " + matchId);
 			    }
 		    } else {
-		    	System.out.println("MatchId already in queue: " + matchId);
+		    	//System.out.println("MatchId already in queue: " + matchId);
 		    }
 		} catch ( Exception e ) {
 		      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
@@ -200,7 +199,7 @@ public class Tables {
 			    	System.out.println("SummonerID already analyzed: " + summonerId);
 			    }
 		    } else {
-		    	System.out.println("SummonerID already in queue: " + summonerId);
+		    	//System.out.println("SummonerID already in queue: " + summonerId);
 		    }
 		} catch ( Exception e ) {
 		      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
@@ -328,14 +327,14 @@ public class Tables {
 	    return 0;
 	}
 	
-	public int getMatchIDQueue() {
+	public long getMatchIDQueue() {
 		
 		// get next matchID from queue
 		ResultSet rs = null;
 	    
 	    try {
 	      rs = SQLConn.createStatement().executeQuery("SELECT * FROM matchIDQueue;");  
-	      int matchID = rs.getInt("matchID");
+	      long matchID = rs.getLong("matchID");
 	      SQLConn.createStatement().executeUpdate("DELETE FROM matchIDQueue where matchID = '" + matchID + "';");
 	      
 	      return matchID;
@@ -428,7 +427,6 @@ public class Tables {
 	
 	public int getMatchIDQueueSize() {
 		ResultSet rs = null;
-		
 		int size = 0;
 		
 		try {
@@ -503,7 +501,7 @@ public class Tables {
 	}
 	
 	// returns number of times most frequent champ appeared
-	public int getMostFreqentChampNumber() {
+	public int getMostFrequentChampNumber() {
 		ResultSet rs = null;
 		int champNumber = 0;
 		
@@ -533,21 +531,169 @@ public class Tables {
 	
 	// role
 	public String getMostFrequentRole() {
-		return null;
+		ResultSet rs = null;
+		String mostFrequentRole = null;
+		
+		try {
+			rs = SQLConn.createStatement().executeQuery("Select killerRole, "
+					+ "count('killerrole') as occurrence "
+					+ "FROM FBStatistics "
+					+ "group by killerrole "
+					+ "order by occurrence desc "
+					+ "limit 1");
+			
+			mostFrequentRole = rs.getString(1);
+			
+		} catch ( Exception e ) {
+		      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+		      System.exit(0);
+		}
+		finally {
+	    	try {
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+	    }
+		return mostFrequentRole;
+	}
+	
+	public int getMostFrequentRoleNumber() {
+		ResultSet rs = null;
+		int mostFrequentRoleNumber = 0;
+		
+		try {
+			rs = SQLConn.createStatement().executeQuery("Select killerRole, "
+					+ "count('killerrole') as occurrence "
+					+ "FROM FBStatistics "
+					+ "group by killerrole "
+					+ "order by occurrence desc "
+					+ "limit 1");
+			
+			mostFrequentRoleNumber = rs.getInt(2);
+			
+		} catch ( Exception e ) {
+		      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+		      System.exit(0);
+		}
+		finally {
+	    	try {
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+	    }
+		return mostFrequentRoleNumber;
 	}
 	
 	// lane
 	public String getMostFrequentLane() {
-		return null;
+		ResultSet rs = null;
+		String mostFrequentLane = null;
+		
+		try {
+			rs = SQLConn.createStatement().executeQuery("Select killerLane, "
+					+ "count('killerlane') as occurrence "
+					+ "FROM FBStatistics "
+					+ "group by killerlane "
+					+ "order by occurrence desc "
+					+ "limit 1");
+			System.out.println("failing here");
+			mostFrequentLane = rs.getString(1);
+			
+		} catch ( Exception e ) {
+		      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+		      System.exit(0);
+		}
+		finally {
+	    	try {
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+	    }
+		return mostFrequentLane;
+	}
+	
+	public int getMostFrequentLaneNumber() {
+		ResultSet rs = null;
+		int mostFrequentLaneNumber = 0;
+		
+		try {
+			rs = SQLConn.createStatement().executeQuery("Select killerLane, "
+					+ "count('killerlane') as occurrence "
+					+ "FROM FBStatistics "
+					+ "group by killerlane "
+					+ "order by occurrence desc "
+					+ "limit 1");
+			
+			mostFrequentLaneNumber = rs.getInt(2);
+			
+		} catch ( Exception e ) {
+		      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+		      System.exit(0);
+		}
+		finally {
+	    	try {
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+	    }
+		return mostFrequentLaneNumber;
 	}
 	
 	// win
 	public int getNumberWins() {
-		return 0;
+		ResultSet rs = null;
+		int teamWins = 0;
+		
+		try {
+			rs = SQLConn.createStatement().executeQuery("Select killerTeamWin, "
+					+ "count('killerTeamWin') as occurrence "
+					+ "FROM FBStatistics "
+					+ "WHERE killerTeamWin = 'true';");
+			
+			teamWins = rs.getInt(2);
+			
+		} catch ( Exception e ) {
+		      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+		      System.exit(0);
+		}
+		finally {
+	    	try {
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+	    }
+		return teamWins;
 	}
 	
 	public int getNumberLosses() {
-		return 0;
+		ResultSet rs = null;
+		int teamLosses = 0;
+		
+		try {
+			rs = SQLConn.createStatement().executeQuery("Select killerTeamWin, "
+					+ "count('killerTeamWin') as occurrence "
+					+ "FROM FBStatistics "
+					+ "WHERE killerTeamWin = 'false';");
+			
+			teamLosses = rs.getInt(2);
+			
+		} catch ( Exception e ) {
+		      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+		      System.exit(0);
+		}
+		finally {
+	    	try {
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+	    }
+		return teamLosses;
 	}
 	
 }
